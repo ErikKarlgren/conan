@@ -21,6 +21,12 @@ def size(conan_api: ConanAPI, parser, *args):
     parser.add_argument(
         "--verbose", action="store_true", help="Show the size of all artifacts"
     )
+    parser.add_argument(
+        "--in-bytes",
+        action="store_true",
+        help="Show the size in bytes instead of the most appropiate unit in each "
+        "case (B, KB, MB, ...)",
+    )
 
     args = parser.parse_args(*args)
     try:
@@ -54,4 +60,4 @@ def size(conan_api: ConanAPI, parser, *args):
             raise ConanException(
                 f"'--folder {args.folder}' requires a recipe reference"
             )
-    conan_api.size.directory_total_size(path, args.verbose)
+    conan_api.size.directory_total_size(path, args.verbose, args.in_bytes)

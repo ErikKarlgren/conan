@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from conan.api.conan_api import ConanAPI
 from conan.cli.command import conan_command
 from conan.cli.cache_path import get_cache_path

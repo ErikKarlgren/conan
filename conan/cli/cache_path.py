@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from conan.api.conan_api import ConanAPI
 from conan.errors import ConanException
 from conans.model.package_ref import PkgReference

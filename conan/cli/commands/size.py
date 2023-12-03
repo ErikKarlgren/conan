@@ -1,8 +1,6 @@
 from conan.api.conan_api import ConanAPI
 from conan.cli.command import conan_command
-from conan.errors import ConanException
-from conans.model.package_ref import PkgReference
-from conans.model.recipe_ref import RecipeReference
+from conan.cli.cache_path import get_cache_path
 
 
 @conan_command(group="Consumer")
@@ -29,35 +27,5 @@ def size(conan_api: ConanAPI, parser, *args):
     )
 
     args = parser.parse_args(*args)
-    try:
-        pref = PkgReference.loads(args.reference)
-    except ConanException:
-        pref = None
-
-    if not pref:  # Not a package reference
-        ref = RecipeReference.loads(args.reference)
-        if args.folder is None:
-            path = conan_api.cache.export_path(ref)
-
-        elif args.folder == "export_source":
-            path = conan_api.cache.export_source_path(ref)
-        elif args.folder == "source":
-            path = conan_api.cache.source_path(ref)
-        elif args.folder == "metadata":
-            path = conan_api.cache.recipe_metadata_path(ref)
-        else:
-            raise ConanException(
-                f"'--folder {args.folder}' requires a valid package reference"
-            )
-    else:
-        if args.folder is None:
-            path = conan_api.cache.package_path(pref)
-        elif args.folder == "build":
-            path = conan_api.cache.build_path(pref)
-        elif args.folder == "metadata":
-            path = conan_api.cache.package_metadata_path(pref)
-        else:
-            raise ConanException(
-                f"'--folder {args.folder}' requires a recipe reference"
-            )
+    path = get_cache_path(conan_api, args.reference, args.folder)
     conan_api.size.directory_total_size(path, args.verbose, args.in_bytes)

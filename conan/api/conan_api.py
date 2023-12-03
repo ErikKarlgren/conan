@@ -16,6 +16,7 @@ from conan.api.subapi.remotes import RemotesAPI
 from conan.api.subapi.remove import RemoveAPI
 from conan.api.subapi.search import SearchAPI
 from conan.api.subapi.upload import UploadAPI
+from conan.api.subapi.size import SizeAPI
 from conans.client.conf.required_version import check_required_conan_version
 from conans.client.migrations import ClientMigrator
 from conans.client.userio import init_colorama
@@ -56,5 +57,6 @@ class ConanAPI(object):
         self.cache = CacheAPI(self)
         self.lockfile = LockfileAPI(self)
         self.local = LocalAPI(self)
+        self.size = SizeAPI(self)
 
         check_required_conan_version(self.config.global_conf)

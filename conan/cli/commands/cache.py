@@ -2,11 +2,10 @@ from conan.api.conan_api import ConanAPI
 from conan.api.model import ListPattern, MultiPackagesList
 from conan.api.output import cli_out_write
 from conan.cli import make_abs_path
+from conan.cli.cache_path import get_cache_path
 from conan.cli.command import conan_command, conan_subcommand, OnceArgument
 from conan.cli.commands.list import print_list_text, print_list_json
 from conan.errors import ConanException
-from conans.model.package_ref import PkgReference
-from conans.model.recipe_ref import RecipeReference
 
 
 @conan_command(group="Consumer")
@@ -29,33 +28,7 @@ def cache_path(conan_api: ConanAPI, parser, subparser, *args):
                                 "and 'package' folder for package references.")
 
     args = parser.parse_args(*args)
-    try:
-        pref = PkgReference.loads(args.reference)
-    except ConanException:
-        pref = None
-
-    if not pref:  # Not a package reference
-        ref = RecipeReference.loads(args.reference)
-        if args.folder is None:
-            path = conan_api.cache.export_path(ref)
-        elif args.folder == "export_source":
-            path = conan_api.cache.export_source_path(ref)
-        elif args.folder == "source":
-            path = conan_api.cache.source_path(ref)
-        elif args.folder == "metadata":
-            path = conan_api.cache.recipe_metadata_path(ref)
-        else:
-            raise ConanException(f"'--folder {args.folder}' requires a valid package reference")
-    else:
-        if args.folder is None:
-            path = conan_api.cache.package_path(pref)
-        elif args.folder == "build":
-            path = conan_api.cache.build_path(pref)
-        elif args.folder == "metadata":
-            path = conan_api.cache.package_metadata_path(pref)
-        else:
-            raise ConanException(f"'--folder {args.folder}' requires a recipe reference")
-    return path
+    return get_cache_path(conan_api, args.reference, args.folder)
 
 
 @conan_subcommand()
